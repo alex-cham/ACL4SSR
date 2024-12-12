@@ -17,7 +17,7 @@ DOMAIN-SUFFIX,openai.com
 DOMAIN-SUFFIX,openaiapi-site.azureedge.net
 DOMAIN-SUFFIX,sentry.io
 DOMAIN-SUFFIX,stripe.com
-DOMAIN-SUFFIX,apple-relay.apple.com
+DOMAIN,apple-relay.apple.com
 DOMAIN-SUFFIX,apple-relay.cloudflare.com
 DOMAIN-KEYWORD,apple-relay
 DOMAIN-SUFFIX,anthropic.com
