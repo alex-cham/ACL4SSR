@@ -1,4 +1,4 @@
-# 内容：OpenAi
+# 内容：OpenAi+ClaudeAi
 # 数量：16条
 # 新增三条，iOS的siri调用GPT配置
 DOMAIN-KEYWORD,openai
@@ -20,3 +20,5 @@ DOMAIN-SUFFIX,stripe.com
 DOMAIN-SUFFIX,apple-relay.apple.com
 DOMAIN-SUFFIX,apple-relay.cloudflare.com
 DOMAIN-KEYWORD,apple-relay
+DOMAIN-SUFFIX,anthropic.com
+DOMAIN-SUFFIX,claude.ai
