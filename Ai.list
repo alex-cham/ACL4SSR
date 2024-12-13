@@ -1,4 +1,4 @@
-# 内容：OpenAi+ClaudeAi
+# 内容：OpenAi+ClaudeAi+Gemini
 # 数量：16条
 # 新增三条，iOS的siri调用GPT配置
 DOMAIN-KEYWORD,openai
@@ -17,9 +17,22 @@ DOMAIN-SUFFIX,openai.com
 DOMAIN-SUFFIX,openaiapi-site.azureedge.net
 DOMAIN-SUFFIX,sentry.io
 DOMAIN-SUFFIX,stripe.com
-DOMAIN,apple-relay.apple.com
-DOMAIN-SUFFIX,apple-relay.cloudflare.com
-DOMAIN-KEYWORD,apple-relay
 DOMAIN-SUFFIX,anthropic.com
 DOMAIN-SUFFIX,claude.ai
 DOMAIN-SUFFIX,claudeusercontent.com
+DOMAIN-KEYWORD,colab
+DOMAIN-KEYWORD,developerprofiles
+DOMAIN-KEYWORD,generativelanguage
+DOMAIN,ai.google.dev
+DOMAIN,alkalimakersuite-pa.clients6.google.com
+DOMAIN,makersuite.google.com
+DOMAIN-SUFFIX,bard.google.com
+DOMAIN-SUFFIX,deepmind.com
+DOMAIN-SUFFIX,deepmind.google
+DOMAIN-SUFFIX,gemini.google.com
+DOMAIN-SUFFIX,generativeai.google
+DOMAIN-SUFFIX,proactivebackend-pa.googleapis.com
+DOMAIN-SUFFIX,apis.google.com
+DOMAIN-SUFFIX,apple-relay.apple.com
+DOMAIN-SUFFIX,apple-relay.cloudflare.com
+DOMAIN-KEYWORD,apple-relay
