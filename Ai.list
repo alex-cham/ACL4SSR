@@ -1,6 +1,7 @@
 # 内容：OpenAi+ClaudeAi+Gemini
 # 数量：16条
 # 新增三条，iOS的siri调用GPT配置
+# 新增Talkatone分流
 DOMAIN-KEYWORD,openai
 DOMAIN-SUFFIX,auth0.com
 DOMAIN-SUFFIX,challenges.cloudflare.com
@@ -37,3 +38,17 @@ DOMAIN-SUFFIX,aistudio.google.com
 DOMAIN-SUFFIX,apple-relay.apple.com
 DOMAIN-SUFFIX,apple-relay.cloudflare.com
 DOMAIN-KEYWORD,apple-relay
+# talkatone，这个对IP要求比较严格，故此加入到此线分流。
+DOMAIN-SUFFIX,mobilefuse.com
+DOMAIN-SUFFIX,inmobi.com
+DOMAIN-SUFFIX,crashlytics.com
+DOMAIN-SUFFIX,talkatone.com
+DOMAIN-SUFFIX,kochava.com
+DOMAIN-SUFFIX,cohere.com
+DOMAIN-SUFFIX,ip-api.com
+DOMAIN-SUFFIX,agkn.com
+DOMAIN-SUFFIX,tktn.at
+IP-CIDR,50.117.27.0/24
+IP-CIDR,69.46.75.0/24
+IP-CIDR,205.164.56.0/24
+IP-CIDR,63.251.124.0/24
