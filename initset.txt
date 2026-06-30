@@ -17,9 +17,8 @@ sniffer:
     QUIC:
       ports: [443, 8443]
   skip-domain:
-    - "+.apple.com"     
-    - "Mijia Cloud"     
-    - "dlg.io.mi.com"   
+    - "+.apple.com" 
+    - "rt.606404.xyz" 	
 
 # ====================
 # 1. DNS 配置 (精简无 IPv6)
@@ -36,6 +35,7 @@ dns:
     - '+.lan'
     - '+.local'
     - '+.ipw.cn'
+    - '+.qq.com'
     - '+.helpshift.com'
     - '+.chinatelecom.cn'
     - '+.gdtel.com'
