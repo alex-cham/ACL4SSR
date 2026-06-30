@@ -1,0 +1,152 @@
+mode: rule
+log-level: info
+ipv6: false            # 全局关闭 IPv6
+
+# ====================
+# 流量嗅探配置
+# ====================
+sniffer:
+  enable: true
+  parse-pure-ip: true 
+  sniff:
+    HTTP:
+      ports: [80, 8080-8880]
+      override-destination: true
+    TLS:
+      ports: [443, 8443]
+    QUIC:
+      ports: [443, 8443]
+  skip-domain:
+    - "+.apple.com"     
+    - "Mijia Cloud"     
+    - "dlg.io.mi.com"   
+
+# ====================
+# 1. DNS 配置 (精简无 IPv6)
+# ====================
+dns:
+  enable: true
+  prefer-ipv6: false
+  listen: 0.0.0.0:1053
+  ipv6: false
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  
+  fake-ip-filter:
+    - '+.lan'
+    - '+.local'
+    - '+.ipw.cn'
+    - '+.helpshift.com'
+    - '+.chinatelecom.cn'
+    - '+.gdtel.com'
+    - '+.ctc.com'
+    - '+.jd.com'
+    - '+.tvrohd.cc'
+    - '+.34563456.eu.org'
+  
+  nameserver-policy:
+    # 国内直连解析
+    "rule-set:02_direct":
+      - 223.5.5.5
+      - 223.6.6.6
+    # 优先级特例、通用海外解析强制走 DNS 通道（由全部节点代理解析）
+    "rule-set:01_priority_proxy,07_common":
+      - "https://8.8.8.8/dns-query#📡 DNS 通道"
+      - "https://1.1.1.1/dns-query#📡 DNS 通道"
+      
+  nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+
+# ====================
+# 2. Geodata 配置
+# ====================
+geodata-mode: true
+geo-auto-update: true
+geo-update-interval: 24
+geox-url:
+  geoip: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat"
+  geosite: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat"
+
+# ====================
+# 3. 订阅来源 (仅保留 Sub_1)
+# ====================
+proxy-providers:
+  Sub_1:
+    type: http
+    url: "https://super.606404.xyz/welove19?b64"
+    interval: 3600
+    path: ./proxies/sub1.yaml
+    health-check:
+      enable: true
+      interval: 300
+      url: http://www.gstatic.com/generate_204
+
+# ====================
+# 4. 自定义规则集
+# ====================
+rule-providers:
+  01_priority_proxy:
+    type: http
+    behavior: classical
+    format: text
+    url: "https://gist.githubusercontent.com/HH3456/77f0c936d27c8859f94ed251f73712fd/raw/01_priority_proxy.list"
+    path: ./rules/01_priority_proxy.list
+    interval: 86400
+
+  02_direct:
+    type: http
+    behavior: classical
+    format: text
+    url: "https://gist.githubusercontent.com/HH3456/9d9ea82e052a0105ea7a195fc7a1f2a9/raw/02_direct.list"
+    path: ./rules/02_direct.list
+    interval: 86400
+
+  07_common:
+    type: http
+    behavior: classical
+    format: text
+    url: "https://gist.githubusercontent.com/HH3456/80751f11ee5d6b545cf38d0b57ce59b3/raw/07_common.list"
+    path: ./rules/07_common.list
+    interval: 86400
+
+# ====================
+# 5. 策略组配置 (彻底回归纯手动控制)
+# ====================
+proxy-groups:
+  # 专属 DNS 节点通道
+  - name: 📡 DNS 通道
+    type: select
+    proxies:
+      - 🚀 全部节点
+
+  # 代理核心组（全部节点手动选）
+  - name: 🚀 全部节点
+    type: select
+    use:
+      - Sub_1
+
+  # 全局漏网之鱼（用来进行最终的控制，默认走全部节点，也可以切直连）
+  - name: 🐟 漏网之鱼
+    type: select
+    proxies:
+      - 🚀 全部节点
+      - DIRECT
+
+# ====================
+# 6. 分流规则 (纯粹的手动指引流)
+# ====================
+rules:
+  # 1. 内网放行
+  - GEOIP,private,DIRECT,no-resolve
+
+  # 2. 最高优先级代理特例
+  - RULE-SET,01_priority_proxy,🚀 全部节点
+
+  # 3. 国内直连
+  - RULE-SET,02_direct,DIRECT
+  - GEOIP,CN,DIRECT,no-resolve
+
+
+  # 4. 兜底（未知流量交给漏网之鱼）
+  - MATCH,🐟 漏网之鱼
