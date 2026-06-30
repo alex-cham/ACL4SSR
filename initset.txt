@@ -1,152 +1,105 @@
-mode: rule
-log-level: info
-ipv6: false            # 全局关闭 IPv6
+# Repo: https://github.com/666OS/YYDS | Channel: https://t.me/Pinched666
+# Add your subscription links in proxy-providers, or insert custom nodes under proxies
 
-# ====================
-# 流量嗅探配置
-# ====================
+
+# Anchors
+x-base-provider: &base-provider {type: http, interval: 86400, proxy: DIRECT, health-check: {enable: true, url: 'https://www.google.com/generate_204', interval: 300}, filter: '^(?!.*(群|邀请|返利|循环|官网|客服|网站|网址|获取|订阅|流量|到期|机场|下次|版本|官址|备用|过期|已用|联系|邮箱|工单|贩卖|通知|倒卖|防止|国内|地址|频道|无法|说明|使用|提示|特别|访问|支持|教程|关注|更新|作者|加入|USE|USED|TOTAL|EXPIRE|EMAIL|Panel|Channel|Author))'}
+
+x-rule-set-domain: &rule-set-domain { type: http, behavior: domain, format: mrs, interval: 86400 }
+x-rule-set-ipcidr: &rule-set-ipcidr { type: http, behavior: ipcidr, format: mrs, interval: 86400 }
+
+proxy-providers:
+  Primary: {<<: *base-provider, url: 'https://super.606404.xyz/welove19', override: {additional-prefix: '[P] '}}
+
+# Custom Proxies
+proxies:
+  # - name: "ss1"
+  #   type: ss
+  #   server: server
+  #   port: 443
+  #   cipher: aes-128-gcm
+  #   password: password
+
+# General
+mode: rule
+port: 7890
+socks-port: 7891
+redir-port: 7892
+mixed-port: 7893
+tproxy-port: 7895
+ipv6: false
+allow-lan: false
+unified-delay: true
+tcp-concurrent: true
+log-level: silent
+bind-address: '*'
+find-process-mode: 'always'
+keep-alive-interval: 15
+keep-alive-idle: 600
+authentication: [mihomo:yyds666]
+skip-auth-prefixes: [127.0.0.1/8, '::1/128']
+experimental: {quic-go-disable-gso: true}
+
+# Dashboard
+external-ui-url: https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip
+external-ui-name: zashboard
+external-ui: ui
+external-controller: 127.0.0.1:9090
+secret: yyds666
+profile: {store-selected: true, store-fake-ip: true}
+
+# Sniffer
 sniffer:
   enable: true
-  parse-pure-ip: true 
   sniff:
-    HTTP:
-      ports: [80, 8080-8880]
-      override-destination: true
-    TLS:
-      ports: [443, 8443]
-    QUIC:
-      ports: [443, 8443]
-  skip-domain:
-    - "+.apple.com" 
-    - "rt.606404.xyz" 	
+    HTTP:  {ports: [80, 8080-8880], override-destination: true}
+    TLS:   {ports: [443, 8443]}
+    QUIC:  {ports: [443, 8443]}
+  skip-domain: ["Mijia Cloud", "rt.606404.xyz","+.push.apple.com"]
 
-# ====================
-# 1. DNS 配置 (精简无 IPv6)
-# ====================
+# TUN
+tun:
+  enable: false
+  stack: mixed
+  dns-hijack: ["any:53", "tcp://any:53"]
+  auto-route: true
+  auto-redirect: true
+  auto-detect-interface: true
+
+# DNS
 dns:
   enable: true
-  prefer-ipv6: false
-  listen: 0.0.0.0:1053
   ipv6: false
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
-  
-  fake-ip-filter:
-    - '+.lan'
-    - '+.local'
-    - '+.ipw.cn'
-    - '+.qq.com'
-    - '+.helpshift.com'
-    - '+.chinatelecom.cn'
-    - '+.gdtel.com'
-    - '+.ctc.com'
-    - '+.jd.com'
-    - '+.tvrohd.cc'
-    - '+.34563456.eu.org'
-  
-  nameserver-policy:
-    # 国内直连解析
-    "rule-set:02_direct":
-      - 223.5.5.5
-      - 223.6.6.6
-    # 优先级特例、通用海外解析强制走 DNS 通道（由全部节点代理解析）
-    "rule-set:01_priority_proxy,07_common":
-      - "https://8.8.8.8/dns-query#📡 DNS 通道"
-      - "https://1.1.1.1/dns-query#📡 DNS 通道"
-      
-  nameserver:
-    - 223.5.5.5
-    - 119.29.29.29
+  default-nameserver: [119.29.29.29, 180.184.1.1, 223.5.5.5]
+  nameserver: [https://dns.alidns.com/dns-query, https://doh.pub/dns-query]
+  fake-ip-filter: [+.miwifi.com, rt.606404.xyz,+.qq.com,+.docker.io, +.market.xiaomi.com, +.push.apple.com]
 
-# ====================
-# 2. Geodata 配置
-# ====================
-geodata-mode: true
-geo-auto-update: true
-geo-update-interval: 24
-geox-url:
-  geoip: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat"
-  geosite: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat"
-
-# ====================
-# 3. 订阅来源 (仅保留 Sub_1)
-# ====================
-proxy-providers:
-  Sub_1:
-    type: http
-    url: "https://super.606404.xyz/welove19?b64"
-    interval: 3600
-    path: ./proxies/sub1.yaml
-    health-check:
-      enable: true
-      interval: 300
-      url: http://www.gstatic.com/generate_204
-
-# ====================
-# 4. 自定义规则集
-# ====================
-rule-providers:
-  01_priority_proxy:
-    type: http
-    behavior: classical
-    format: text
-    url: "https://gist.githubusercontent.com/HH3456/77f0c936d27c8859f94ed251f73712fd/raw/01_priority_proxy.list"
-    path: ./rules/01_priority_proxy.list
-    interval: 86400
-
-  02_direct:
-    type: http
-    behavior: classical
-    format: text
-    url: "https://gist.githubusercontent.com/HH3456/9d9ea82e052a0105ea7a195fc7a1f2a9/raw/02_direct.list"
-    path: ./rules/02_direct.list
-    interval: 86400
-
-  07_common:
-    type: http
-    behavior: classical
-    format: text
-    url: "https://gist.githubusercontent.com/HH3456/80751f11ee5d6b545cf38d0b57ce59b3/raw/07_common.list"
-    path: ./rules/07_common.list
-    interval: 86400
-
-# ====================
-# 5. 策略组配置 (彻底回归纯手动控制)
-# ====================
 proxy-groups:
-  # 专属 DNS 节点通道
-  - name: 📡 DNS 通道
-    type: select
-    proxies:
-      - 🚀 全部节点
+  - { name: OUTCN,     type: select, include-all: true, empty-fallback: REJECT, icon: https://github.com/Koolson/Qure/raw/master/IconSet/Color/Global.png }
+  - { name: CN,        type: select, include-all: true, proxies: [DIRECT], icon: https://github.com/Koolson/Qure/raw/master/IconSet/Color/China.png }
+  - { name: MATCH,     type: select, include-all: true, empty-fallback: REJECT, icon: https://github.com/Koolson/Qure/raw/master/IconSet/Color/Final.png }
 
-  # 代理核心组（全部节点手动选）
-  - name: 🚀 全部节点
-    type: select
-    use:
-      - Sub_1
-
-  # 全局漏网之鱼（用来进行最终的控制，默认走全部节点，也可以切直连）
-  - name: 🐟 漏网之鱼
-    type: select
-    proxies:
-      - 🚀 全部节点
-      - DIRECT
-
-# ====================
-# 6. 分流规则 (纯粹的手动指引流)
-# ====================
 rules:
-  # 1. 内网放行
-  - GEOIP,private,DIRECT,no-resolve
+  # guard
+  - AND,((NETWORK,UDP),(DST-PORT,443),(NOT,((GEOIP,CN,no-resolve)))),REJECT
+  # local
+  - RULE-SET,Private,DIRECT
+  - RULE-SET,PrivateIP,DIRECT,no-resolve
+  # outcn
+  - RULE-SET,Proxy,OUTCN
+  - RULE-SET,ProxyIP,OUTCN,no-resolve
+  # cn
+  - RULE-SET,China,CN
+  - RULE-SET,ChinaIP,CN,no-resolve
+  # match
+  - MATCH,MATCH
 
-  # 2. 最高优先级代理特例
-  - RULE-SET,01_priority_proxy,🚀 全部节点
-
-  # 3. 国内直连
-  - RULE-SET,02_direct,DIRECT
-  - GEOIP,CN,DIRECT,no-resolve
-
-
-  # 4. 兜底（未知流量交给漏网之鱼）
-  - MATCH,🐟 漏网之鱼
+rule-providers:
+  Private:        { <<: *rule-set-domain, url: https://github.com/666OS/rules/raw/release/mihomo/domain/Private.mrs }
+  Proxy:          { <<: *rule-set-domain, url: https://github.com/666OS/rules/raw/release/mihomo/domain/Proxy.mrs }
+  China:          { <<: *rule-set-domain, url: https://github.com/666OS/rules/raw/release/mihomo/domain/China.mrs }
+  PrivateIP:      { <<: *rule-set-ipcidr, url: https://github.com/666OS/rules/raw/release/mihomo/ip/Private.mrs }
+  ProxyIP:        { <<: *rule-set-ipcidr, url: https://github.com/666OS/rules/raw/release/mihomo/ip/Proxy.mrs }
+  ChinaIP:        { <<: *rule-set-ipcidr, url: https://github.com/666OS/rules/raw/release/mihomo/ip/China.mrs }
