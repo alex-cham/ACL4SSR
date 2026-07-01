@@ -60,7 +60,7 @@ dns:
     - https://doh.pub/dns-query
     - https://dns.alidns.com/dns-query
     
-  # 🎯 修复连写错误：独立分行配置国内 DNS 分流策略
+  # 🎯 独立分行配置国内 DNS 分流策略
   nameserver-policy:
     "rule-set:China": [223.5.5.5, 119.29.29.29]
     "rule-set:apple_domain": [223.5.5.5, 119.29.29.29]
@@ -84,7 +84,7 @@ proxy-groups:
   # 国内放行组
   - { name: CN,        type: select, proxies: [DIRECT] }
 
-  # 兜底组（移除自身 MATCH 选项，规避死循环风险）
+  # 兜底组
   - { name: FINAL,     type: select, proxies: [🚀 全部节点, DIRECT] }
 
 # ====================
@@ -102,11 +102,10 @@ rules:
   - RULE-SET,ai,🚀 全部节点
   - DOMAIN-SUFFIX,rt.606404.xyz,DIRECT
   
-  # 苹果与微软专属分流优化
-  - DOMAIN-SUFFIX,apple.com,DIRECT
+  # 🎯 苹果与微软专属分流优化（已修复：加入 apple_domain 并去重）
+  - RULE-SET,apple_domain,DIRECT
   - RULE-SET,apple_ip,DIRECT,no-resolve
   - RULE-SET,ms_domain,DIRECT
-  - DOMAIN-SUFFIX,apple.com,DIRECT
   
   # 国内常规放行
   - RULE-SET,China,CN
