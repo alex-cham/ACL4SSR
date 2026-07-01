@@ -40,7 +40,7 @@ sniffer:
     HTTP:  {ports: [80, 8080-8880], override-destination: true}
     TLS:   {ports: [443, 8443]}
     QUIC:  {ports: [443, 8443]}
-  skip-domain: ["Mijia Cloud", "rt.606404.xyz","+.apple.com"]
+  skip-domain: ["rt.606404.xyz", "+.apple.com"]
 
 # TUN
 tun:
@@ -48,7 +48,7 @@ tun:
   stack: mixed
   auto-route: true
 
-# DNS (精简并优化分流)
+# DNS
 dns:
   enable: true
   ipv6: false
@@ -60,11 +60,11 @@ dns:
     - https://doh.pub/dns-query
     - https://dns.alidns.com/dns-query
     
-  # 🎯 补全国内 DNS 分流策略，防止直连域名跑到海外 DNS 去解析
+  # 🎯 修复连写错误：独立分行配置国内 DNS 分流策略
   nameserver-policy:
-    "rule-set:China,apple_domain,ms_domain":
-      - 223.5.5.5
-      - 119.29.29.29
+    "rule-set:China": [223.5.5.5, 119.29.29.29]
+    "rule-set:apple_domain": [223.5.5.5, 119.29.29.29]
+    "rule-set:ms_domain": [223.5.5.5, 119.29.29.29]
 
   fake-ip-filter:
     - "rule-set:China"
@@ -75,7 +75,7 @@ dns:
     - 'rt.606404.xyz'
 
 # ====================
-# 策略组配置 (彻底精简、拒绝重复平铺)
+# 策略组配置
 # ====================
 proxy-groups:
   # 手动选择核心组
@@ -84,14 +84,14 @@ proxy-groups:
   # 国内放行组
   - { name: CN,        type: select, proxies: [DIRECT] }
 
-  # 兜底组
-  - { name: MATCH,     type: select, proxies: [🚀 全部节点, DIRECT] }
+  # 兜底组（移除自身 MATCH 选项，规避死循环风险）
+  - { name: FINAL,     type: select, proxies: [🚀 全部节点, DIRECT] }
 
 # ====================
 # 分流规则
 # ====================
 rules:
-  # 1. 拦截海外 UDP 443 (QUIC)，强制降级 TCP 走代理
+  # 1. 拦截海外 UDP 443 (QUIC)
   - AND,((NETWORK,UDP),(DST-PORT,443),(NOT,((GEOIP,CN,no-resolve)))),REJECT
   
   # 2. 内网、局域网放行
@@ -100,19 +100,24 @@ rules:
 
   # 3. 各种直连和分流
   - RULE-SET,ai,🚀 全部节点
-  - RULE-SET,China,CN
-  - RULE-SET,ChinaIP,CN,no-resolve
   - DOMAIN-SUFFIX,rt.606404.xyz,DIRECT
+  
+  # 苹果与微软专属分流优化
+  - DOMAIN-SUFFIX,apple.com,DIRECT
   - RULE-SET,apple_ip,DIRECT,no-resolve
   - RULE-SET,ms_domain,DIRECT
   - DOMAIN-SUFFIX,apple.com,DIRECT
+  
+  # 国内常规放行
+  - RULE-SET,China,CN
+  - RULE-SET,ChinaIP,CN,no-resolve
   
   # 5. 国外常规代理
   - RULE-SET,Proxy,🚀 全部节点
   - RULE-SET,ProxyIP,🚀 全部节点,no-resolve
   
   # 6. 全局兜底
-  - MATCH,MATCH
+  - MATCH,FINAL
 
 # ====================
 # 规则集来源
@@ -121,12 +126,13 @@ rule-providers:
   Private:        { <<: *rule-set-domain, url: https://github.com/666OS/rules/raw/release/mihomo/domain/Private.mrs }
   Proxy:          { <<: *rule-set-domain, url: https://github.com/666OS/rules/raw/release/mihomo/domain/Proxy.mrs }
   China:          { <<: *rule-set-domain, url: https://github.com/666OS/rules/raw/release/mihomo/domain/China.mrs }
-  apple_domain:   { <<: *rule-set-domain, url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/apple.mrs}
-  apple_ip:       { <<: *rule-set-ipcidr, url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo-lite/geoip/apple.mrs}
+  apple_domain:   { <<: *rule-set-domain, url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/apple.mrs }
+  apple_ip:       { <<: *rule-set-ipcidr, url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo-lite/geoip/apple.mrs }
   PrivateIP:      { <<: *rule-set-ipcidr, url: https://github.com/666OS/rules/raw/release/mihomo/ip/Private.mrs }
   ProxyIP:        { <<: *rule-set-ipcidr, url: https://github.com/666OS/rules/raw/release/mihomo/ip/Proxy.mrs }
   ChinaIP:        { <<: *rule-set-ipcidr, url: https://github.com/666OS/rules/raw/release/mihomo/ip/China.mrs }
-  ms_domain:      { <<: *rule-set-domain, url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/microsoft.mrs}
+  ms_domain:      { <<: *rule-set-domain, url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/microsoft.mrs }
+  
   ai:
     type: http
     behavior: classical
