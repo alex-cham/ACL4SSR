@@ -3,7 +3,7 @@
 
 
 # Anchors
-x-base-provider: &base-provider {type: http, interval: 86400, proxy: DIRECT, health-check: {enable: true, url: 'https://www.google.com/generate_204', interval: 300}, filter: '^(?!.*(群|邀请))'}
+x-base-provider: &base-provider {type: http, interval: 86400, proxy: DIRECT, health-check: {enable: true, url: 'https://www.google.com/generate_204', interval: 300}, filter: '^(?!.*(群))'}
 
 x-rule-set-domain: &rule-set-domain { type: http, behavior: domain, format: mrs, interval: 86400 }
 x-rule-set-ipcidr: &rule-set-ipcidr { type: http, behavior: ipcidr, format: mrs, interval: 86400 }
@@ -74,12 +74,12 @@ dns:
   fake-ip-range: 198.18.0.1/16
   default-nameserver: [119.29.29.29, 180.184.1.1, 223.5.5.5]
   nameserver: [https://dns.alidns.com/dns-query, https://doh.pub/dns-query]
-  fake-ip-filter: [Private,China,+.miwifi.com, rt.606404.xyz,+.qq.com,+.docker.io, +.market.xiaomi.com, +.push.apple.com]
+  fake-ip-filter: [Private,China,+.miwifi.com, rt.606404.xyz,+.docker.io, +.market.xiaomi.com, +.push.apple.com]
 
 proxy-groups:
   - { name: OUTCN,     type: select, include-all: true, empty-fallback: REJECT }
-  - { name: CN,        type: select, DIRECT }
-  - { name: MATCH,     type: select, include-all: true, empty-fallback: REJECT, icon: https://github.com/Koolson/Qure/raw/master/IconSet/Color/Final.png }
+  - { name: CN,        type: select, proxies: [DIRECT] }
+  - { name: MATCH,     type: select, include-all: true, empty-fallback: REJECT }
 
 rules:
   # guard
