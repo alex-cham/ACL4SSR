@@ -89,7 +89,9 @@ rules:
   - RULE-SET,PrivateIP,DIRECT,no-resolve
   # apple
   - RULE-SET,apple_domain,DIRECT
-  - RULE-SET,apple_ip,DIRECT,no-resolve 
+  - RULE-SET,apple_ip,DIRECT,no-resolve
+  # Microsoft
+  - RULE-SET,ms_domain,DIRECT
   # outcn
   - RULE-SET,Proxy,OUTCN
   - RULE-SET,ProxyIP,OUTCN,no-resolve
@@ -107,4 +109,5 @@ rule-providers:
   PrivateIP:      { <<: *rule-set-ipcidr, url: https://github.com/666OS/rules/raw/release/mihomo/ip/Private.mrs }
   ProxyIP:        { <<: *rule-set-ipcidr, url: https://github.com/666OS/rules/raw/release/mihomo/ip/Proxy.mrs }
   ChinaIP:        { <<: *rule-set-ipcidr, url: https://github.com/666OS/rules/raw/release/mihomo/ip/China.mrs }  
-  apple_ip:       { <<: *rule-set-ipcidr, url:https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo-lite/geoip/apple.mrs"}
+  apple_ip:       { <<: *rule-set-ipcidr, url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo-lite/geoip/apple.mrs}
+  ms_domain:      { <<: *rule-set-domain, url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/microsoft.mrs}
