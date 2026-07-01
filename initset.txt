@@ -77,8 +77,8 @@ dns:
   fake-ip-filter: [Private,China,+.miwifi.com, rt.606404.xyz,+.qq.com,+.docker.io, +.market.xiaomi.com, +.push.apple.com]
 
 proxy-groups:
-  - { name: OUTCN,     type: select, include-all: true, empty-fallback: REJECT, icon: https://github.com/Koolson/Qure/raw/master/IconSet/Color/Global.png }
-  - { name: CN,        type: select, include-all: true, proxies: [DIRECT], icon: https://github.com/Koolson/Qure/raw/master/IconSet/Color/China.png }
+  - { name: OUTCN,     type: select, include-all: true, empty-fallback: REJECT }
+  - { name: CN,        type: [DIRECT] }
   - { name: MATCH,     type: select, include-all: true, empty-fallback: REJECT, icon: https://github.com/Koolson/Qure/raw/master/IconSet/Color/Final.png }
 
 rules:
