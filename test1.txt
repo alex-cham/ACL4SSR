@@ -1,6 +1,5 @@
 # Repo: https://github.com/666OS/YYDS | Channel: https://t.me/Pinched666
-# Add your subscription links in proxy-providers, or insert custom nodes under proxies
-
+# 优化版：全面向“内网、国内、国外”纯手动手动三段式靠拢，修复格式报错
 
 # Anchors
 x-base-provider: &base-provider {type: http, interval: 86400, proxy: DIRECT, health-check: {enable: true, url: 'https://www.google.com/generate_204', interval: 300}, filter: '^(?!.*(群))'}
@@ -11,34 +10,23 @@ x-rule-set-ipcidr: &rule-set-ipcidr { type: http, behavior: ipcidr, format: mrs,
 proxy-providers:
   Primary: {<<: *base-provider, url: 'https://super.606404.xyz/welove19', override: {additional-prefix: '[P] '}}
 
-# Custom Proxies
 proxies:
-  # - name: "ss1"
-  #   type: ss
-  #   server: server
-  #   port: 443
-  #   cipher: aes-128-gcm
-  #   password: password
 
 # General
 mode: rule
 port: 7890
 socks-port: 7891
-redir-port: 7892
 mixed-port: 7893
 tproxy-port: 7895
-ipv6: false
+ipv6: false              # 彻底关闭 IPv6
 allow-lan: false
 unified-delay: true
 tcp-concurrent: true
-log-level: silent
+log-level: info          # 改为 info 方便在控制台排查可能存在的报错
 bind-address: '*'
 find-process-mode: 'always'
 keep-alive-interval: 15
 keep-alive-idle: 600
-authentication: [mihomo:123451234]
-skip-auth-prefixes: [127.0.0.1/8, '::1/128']
-experimental: {quic-go-disable-gso: true}
 
 # Dashboard
 external-ui-url: https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip
@@ -61,56 +49,88 @@ sniffer:
 tun:
   enable: false
   stack: mixed
-  dns-hijack: ["any:53", "tcp://any:53"]
   auto-route: true
-  auto-redirect: true
-  auto-detect-interface: true
 
-# DNS
+# DNS (精简并优化分流)
 dns:
   enable: true
   ipv6: false
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
-  default-nameserver: [119.29.29.29, 180.184.1.1, 223.5.5.5]
-  nameserver: [https://dns.alidns.com/dns-query, https://doh.pub/dns-query]
+  default-nameserver: [119.29.29.29, 223.5.5.5]
+  
+  nameserver: 
+    - https://doh.pub/dns-query
+    - https://dns.alidns.com/dns-query
+    
+  # 🎯 补全国内 DNS 分流策略，防止直连域名跑到海外 DNS 去解析
+  nameserver-policy:
+    "rule-set:China,apple_domain,ms_domain":
+      - 223.5.5.5
+      - 119.29.29.29
+
   fake-ip-filter: [Private,China,+.miwifi.com, rt.606404.xyz,+.docker.io, +.market.xiaomi.com, +.push.apple.com]
 
+# ====================
+# 策略组配置 (彻底精简、拒绝重复平铺)
+# ====================
 proxy-groups:
-  - { name: OUTCN,     type: select, include-all: true, empty-fallback: REJECT }
-  - { name: CN,        type: select, proxies: [DIRECT] }
-  - { name: MATCH,     type: select, include-all: true, empty-fallback: REJECT }
+  # 手动选择核心组
+  - { name: 🚀 全部节点, type: select, include-all: true }
 
+  # 国内放行组
+  - { name: CN,        type: select, proxies: [DIRECT] }
+
+  # 兜底组
+  - { name: MATCH,     type: select, proxies: [🚀 全部节点, DIRECT] }
+
+# ====================
+# 分流规则
+# ====================
 rules:
-  # guard
+  # 1. 拦截海外 UDP 443 (QUIC)，强制降级 TCP 走代理
   - AND,((NETWORK,UDP),(DST-PORT,443),(NOT,((GEOIP,CN,no-resolve)))),REJECT
-  # local
+  
+  # 2. 内网、局域网放行
   - RULE-SET,Private,DIRECT
   - RULE-SET,PrivateIP,DIRECT,no-resolve
-  #ai
-  - RULE-SET,ai,OUTCN
-  # apple
+  
+  # 3. 特例业务分流
+  - RULE-SET,ai,🚀 全部节点
   - RULE-SET,apple_domain,DIRECT
   - RULE-SET,apple_ip,DIRECT,no-resolve
-  # Microsoft
   - RULE-SET,ms_domain,DIRECT
-  # outcn
-  - RULE-SET,Proxy,OUTCN
-  - RULE-SET,ProxyIP,OUTCN,no-resolve
-  # cn
+  
+  # 4. 国外常规代理
+  - RULE-SET,Proxy,🚀 全部节点
+  - RULE-SET,ProxyIP,🚀 全部节点,no-resolve
+  
+  # 5. 国内常规直连
   - RULE-SET,China,CN
   - RULE-SET,ChinaIP,CN,no-resolve
-  # match
+  
+  # 6. 全局兜底
   - MATCH,MATCH
 
+# ====================
+# 规则集来源
+# ====================
 rule-providers:
   Private:        { <<: *rule-set-domain, url: https://github.com/666OS/rules/raw/release/mihomo/domain/Private.mrs }
   Proxy:          { <<: *rule-set-domain, url: https://github.com/666OS/rules/raw/release/mihomo/domain/Proxy.mrs }
   China:          { <<: *rule-set-domain, url: https://github.com/666OS/rules/raw/release/mihomo/domain/China.mrs }
   apple_domain:   { <<: *rule-set-domain, url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/apple.mrs}
+  
   PrivateIP:      { <<: *rule-set-ipcidr, url: https://github.com/666OS/rules/raw/release/mihomo/ip/Private.mrs }
   ProxyIP:        { <<: *rule-set-ipcidr, url: https://github.com/666OS/rules/raw/release/mihomo/ip/Proxy.mrs }
   ChinaIP:        { <<: *rule-set-ipcidr, url: https://github.com/666OS/rules/raw/release/mihomo/ip/China.mrs }  
   apple_ip:       { <<: *rule-set-ipcidr, url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo-lite/geoip/apple.mrs}
   ms_domain:      { <<: *rule-set-domain, url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/microsoft.mrs}
-  ai:             { <<: *rule-set-domain, url: https://git.606404.xyz/https://raw.githubusercontent.com/alex-cham/ACL4SSR/refs/heads/rm/Ai.list}
+  
+  # ✅ 彻底修复此处：由于远程是 .list 文本文件，单独声明 classical 行为和 text 格式，避免 mrs 反序列化报错崩溃
+  ai:
+    type: http
+    behavior: classical
+    format: text
+    url: https://git.606404.xyz/https://raw.githubusercontent.com/alex-cham/ACL4SSR/refs/heads/rm/Ai.list
+    interval: 86400
