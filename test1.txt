@@ -56,15 +56,30 @@ dns:
   fake-ip-range: 198.18.0.1/16
   default-nameserver: [119.29.29.29, 223.5.5.5]
   
+  # 全局并发 DNS：国内无脑走阿里/腾讯 DoH，海外域名会命中下方的 policy 走 Google/CF
   nameserver: 
     - https://doh.pub/dns-query
     - https://dns.alidns.com/dns-query
     
-  # 🎯 独立分行配置国内 DNS 分流策略
-  nameserver-policy:
-    "rule-set:China": [223.5.5.5, 119.29.29.29]
-    "rule-set:apple_domain": [223.5.5.5, 119.29.29.29]
-    "rule-set:ms_domain": [223.5.5.5, 119.29.29.29]
+  # 🎯 针对特定规则集的 DNS 定向分流策略
+nameserver-policy:
+    rule-set:China:
+      - 202.96.128.86
+      - 119.29.29.29
+      - 223.5.5.5
+    rule-set:apple_domain:
+      - 202.96.128.86
+      - 119.29.29.29
+      - 223.5.5.5
+    rule-set:ms_domain:
+      - 202.96.128.86
+      - 119.29.29.29
+      - 223.5.5.5
+    
+    # 👇 属于 Proxy 组的海外域名，同时向 Google 和 Cloudflare 的 DoH 发起并发查询，谁快用谁
+    "rule-set:Proxy": 
+      - https://8.8.8.8/dns-query
+      - https://1.1.1.1/dns-query
 
   fake-ip-filter:
     - "rule-set:China"
