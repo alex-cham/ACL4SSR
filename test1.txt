@@ -87,6 +87,8 @@ rules:
   # local
   - RULE-SET,Private,DIRECT
   - RULE-SET,PrivateIP,DIRECT,no-resolve
+  #ai
+  - RULE-SET,ai,OUTCN
   # apple
   - RULE-SET,apple_domain,DIRECT
   - RULE-SET,apple_ip,DIRECT,no-resolve
@@ -111,3 +113,4 @@ rule-providers:
   ChinaIP:        { <<: *rule-set-ipcidr, url: https://github.com/666OS/rules/raw/release/mihomo/ip/China.mrs }  
   apple_ip:       { <<: *rule-set-ipcidr, url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo-lite/geoip/apple.mrs}
   ms_domain:      { <<: *rule-set-domain, url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/microsoft.mrs}
+  ai:             { <<: *rule-set-domain, url: https://git.606404.xyz/https://raw.githubusercontent.com/alex-cham/ACL4SSR/refs/heads/rm/Ai.list}
