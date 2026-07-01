@@ -36,7 +36,7 @@ bind-address: '*'
 find-process-mode: 'always'
 keep-alive-interval: 15
 keep-alive-idle: 600
-authentication: [mihomo:yyds666]
+authentication: [mihomo:123451234]
 skip-auth-prefixes: [127.0.0.1/8, '::1/128']
 experimental: {quic-go-disable-gso: true}
 
@@ -45,7 +45,7 @@ external-ui-url: https://github.com/Zephyruso/zashboard/releases/latest/download
 external-ui-name: zashboard
 external-ui: ui
 external-controller: 127.0.0.1:9090
-secret: yyds666
+secret: 123451234
 profile: {store-selected: true, store-fake-ip: true}
 
 # Sniffer
@@ -78,7 +78,7 @@ dns:
 
 proxy-groups:
   - { name: OUTCN,     type: select, include-all: true, empty-fallback: REJECT }
-  - { name: CN,        type: DIRECT }
+  - { name: CN,        type: select, DIRECT }
   - { name: MATCH,     type: select, include-all: true, empty-fallback: REJECT, icon: https://github.com/Koolson/Qure/raw/master/IconSet/Color/Final.png }
 
 rules:
