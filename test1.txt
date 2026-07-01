@@ -1,6 +1,3 @@
-# Repo: https://github.com/666OS/YYDS | Channel: https://t.me/Pinched666
-# 优化版：全面向“内网、国内、国外”纯手动手动三段式靠拢，修复格式报错
-
 # Anchors
 x-base-provider: &base-provider {type: http, interval: 86400, proxy: DIRECT, health-check: {enable: true, url: 'https://www.google.com/generate_204', interval: 300}, filter: '^(?!.*(群))'}
 
@@ -43,7 +40,7 @@ sniffer:
     HTTP:  {ports: [80, 8080-8880], override-destination: true}
     TLS:   {ports: [443, 8443]}
     QUIC:  {ports: [443, 8443]}
-  skip-domain: ["Mijia Cloud", "rt.606404.xyz","+.push.apple.com"]
+  skip-domain: ["Mijia Cloud", "rt.606404.xyz","+.apple.com"]
 
 # TUN
 tun:
@@ -100,21 +97,19 @@ rules:
   # 2. 内网、局域网放行
   - RULE-SET,Private,DIRECT
   - RULE-SET,PrivateIP,DIRECT,no-resolve
-  
-  # 3. 特例业务分流
+
+  # 3. 各种直连和分流
   - RULE-SET,ai,🚀 全部节点
-  - DOMAIN-SUFFIX,apple.com,DIRECT
+  - RULE-SET,China,CN
+  - RULE-SET,ChinaIP,CN,no-resolve
   - DOMAIN-SUFFIX,rt.606404.xyz,DIRECT
   - RULE-SET,apple_ip,DIRECT,no-resolve
   - RULE-SET,ms_domain,DIRECT
+  - DOMAIN-SUFFIX,apple.com,DIRECT
   
-  # 4. 国外常规代理
+  # 5. 国外常规代理
   - RULE-SET,Proxy,🚀 全部节点
   - RULE-SET,ProxyIP,🚀 全部节点,no-resolve
-  
-  # 5. 国内常规直连
-  - RULE-SET,China,CN
-  - RULE-SET,ChinaIP,CN,no-resolve
   
   # 6. 全局兜底
   - MATCH,MATCH
