@@ -3,7 +3,7 @@
 
 
 # Anchors
-x-base-provider: &base-provider {type: http, interval: 86400, proxy: DIRECT, health-check: {enable: true, url: 'https://www.google.com/generate_204', interval: 300}, filter: '^(?!.*(群|邀请|返利|循环|官网|客服|网站|网址|获取|订阅|流量|到期|机场|下次|版本|官址|过期|已用|联系|邮箱|工单|贩卖|通知|倒卖|防止|国内|地址|频道|无法|说明|使用|提示|特别|访问|支持|教程|关注|更新|作者|加入|USE|USED|TOTAL|EXPIRE|EMAIL|Panel|Channel|Author))'}
+x-base-provider: &base-provider {type: http, interval: 86400, proxy: DIRECT, health-check: {enable: true, url: 'https://www.google.com/generate_204', interval: 300}, filter: '^(?!.*(群|邀请))'}
 
 x-rule-set-domain: &rule-set-domain { type: http, behavior: domain, format: mrs, interval: 86400 }
 x-rule-set-ipcidr: &rule-set-ipcidr { type: http, behavior: ipcidr, format: mrs, interval: 86400 }
@@ -74,7 +74,7 @@ dns:
   fake-ip-range: 198.18.0.1/16
   default-nameserver: [119.29.29.29, 180.184.1.1, 223.5.5.5]
   nameserver: [https://dns.alidns.com/dns-query, https://doh.pub/dns-query]
-  fake-ip-filter: [+.miwifi.com, rt.606404.xyz,+.qq.com,+.docker.io, +.market.xiaomi.com, +.push.apple.com]
+  fake-ip-filter: [Private,China,+.miwifi.com, rt.606404.xyz,+.qq.com,+.docker.io, +.market.xiaomi.com, +.push.apple.com]
 
 proxy-groups:
   - { name: OUTCN,     type: select, include-all: true, empty-fallback: REJECT, icon: https://github.com/Koolson/Qure/raw/master/IconSet/Color/Global.png }
@@ -87,6 +87,9 @@ rules:
   # local
   - RULE-SET,Private,DIRECT
   - RULE-SET,PrivateIP,DIRECT,no-resolve
+  # apple
+  - RULE-SET,apple_domain,DIRECT
+  - RULE-SET,apple_ip,DIRECT,no-resolve 
   # outcn
   - RULE-SET,Proxy,OUTCN
   - RULE-SET,ProxyIP,OUTCN,no-resolve
@@ -100,6 +103,8 @@ rule-providers:
   Private:        { <<: *rule-set-domain, url: https://github.com/666OS/rules/raw/release/mihomo/domain/Private.mrs }
   Proxy:          { <<: *rule-set-domain, url: https://github.com/666OS/rules/raw/release/mihomo/domain/Proxy.mrs }
   China:          { <<: *rule-set-domain, url: https://github.com/666OS/rules/raw/release/mihomo/domain/China.mrs }
+  apple_domain:   { <<: *rule-set-domain, url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/apple.mrs}
   PrivateIP:      { <<: *rule-set-ipcidr, url: https://github.com/666OS/rules/raw/release/mihomo/ip/Private.mrs }
   ProxyIP:        { <<: *rule-set-ipcidr, url: https://github.com/666OS/rules/raw/release/mihomo/ip/Proxy.mrs }
-  ChinaIP:        { <<: *rule-set-ipcidr, url: https://github.com/666OS/rules/raw/release/mihomo/ip/China.mrs }
+  ChinaIP:        { <<: *rule-set-ipcidr, url: https://github.com/666OS/rules/raw/release/mihomo/ip/China.mrs }  
+  apple_ip:       { <<: *rule-set-ipcidr, url:https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo-lite/geoip/apple.mrs"}
