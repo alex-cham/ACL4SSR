@@ -69,7 +69,13 @@ dns:
       - 223.5.5.5
       - 119.29.29.29
 
-  fake-ip-filter: [Private,China,+.miwifi.com, rt.606404.xyz,+.docker.io, +.market.xiaomi.com, +.push.apple.com]
+  fake-ip-filter:
+    - "rule-set:China"
+    - "rule-set:apple_domain"
+    - "rule-set:ms_domain"
+    - '+.lan'
+    - '+.local'
+    - 'rt.606404.xyz'
 
 # ====================
 # 策略组配置 (彻底精简、拒绝重复平铺)
@@ -98,6 +104,7 @@ rules:
   # 3. 特例业务分流
   - RULE-SET,ai,🚀 全部节点
   - DOMAIN-SUFFIX,apple.com,DIRECT
+  - DOMAIN-SUFFIX,rt.606404.xyz,DIRECT
   - RULE-SET,apple_ip,DIRECT,no-resolve
   - RULE-SET,ms_domain,DIRECT
   
