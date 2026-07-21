@@ -1,0 +1,493 @@
+{
+  "log": {
+    "level": "warn",
+    "timestamp": true
+  },
+  "experimental": {
+    "cache_file": {
+      "enabled": true,
+      "store_fakeip": true
+    }
+  },
+  "inbounds": [
+    {
+      "type": "tun",
+      "tag": "tun-in",
+      "address": [
+        "172.19.0.1/30",
+        "fdfe:dcba:9876::1/126"
+      ],
+      "auto_route": true,
+      "strict_route": true,
+      "endpoint_independent_nat": true,
+      "stack": "gvisor",
+      "sniff": true,
+      "sniff_timeout": "300ms"
+    }
+  ],
+  "outbounds": [
+    {
+      "type": "selector",
+      "tag": "🚀 节点选择",
+      "outbounds": [
+        "BWG_AS9929",
+        "DC1-BWG",
+        "thanksgod",
+        "🇰🇷 KR_首尔01_VMESS",
+        "🇰🇷 KR_首尔02_Vless",
+        "KR_Chuncheon",
+        "CDN线路备用",
+        "KR_02_Vless_CDN",
+        "DIRECT"
+      ],
+      "interrupt_exist_connections": true
+    },
+    {
+      "type": "selector",
+      "tag": "💬 AI",
+      "outbounds": [
+        "🚀 节点选择",
+        "DIRECT"
+      ]
+    },
+    {
+      "type": "selector",
+      "tag": "🍎 苹果服务",
+      "outbounds": [
+        "DIRECT",
+        "🚀 节点选择"
+      ]
+    },
+    {
+      "type": "selector",
+      "tag": "💴 Paypal",
+      "outbounds": [
+        "DIRECT",
+        "🚀 节点选择"
+      ]
+    },
+    {
+      "type": "selector",
+      "tag": "🐟 漏网之鱼",
+      "outbounds": [
+        "🚀 节点选择",
+        "DIRECT"
+      ]
+    },
+    {
+      "type": "direct",
+      "tag": "DIRECT",
+      "domain_strategy": "ipv4_only"
+    },
+    {
+      "type": "block",
+      "tag": "BLOCK"
+    },
+    {
+      "type": "vless",
+      "tag": "BWG_AS9929",
+      "server": "45.62.117.135",
+      "server_port": 443,
+      "uuid": "dd3f4692-612e-43ac-839c-6de4bb7ec136",
+      "flow": "xtls-rprx-vision",
+      "domain_strategy": "ipv4_only",
+      "tls": {
+        "enabled": true,
+        "server_name": "soar.im",
+        "insecure": true,
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "Jp4YRyIjqbbqRS6dbo4E0NgzB9jOWkTBHOGW7zUCOCw",
+          "short_id": "a7b08716"
+        }
+      },
+      "tcp_fast_open": true
+    },
+    {
+      "type": "vless",
+      "tag": "DC1-BWG",
+      "server": "104.224.155.12",
+      "server_port": 443,
+      "uuid": "d7ca75b3-55f0-4d6b-b18f-4b158a425668",
+      "domain_strategy": "ipv4_only",
+      "tls": {
+        "enabled": true,
+        "server_name": "chagushici.com",
+        "insecure": true,
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "GAn20JQqWP_mkerQcrBatRcyY_biFaG4awv8D1cvDQE",
+          "short_id": "4b943969"
+        }
+      },
+      "tcp_fast_open": true
+    },
+    {
+      "type": "vless",
+      "tag": "thanksgod",
+      "server": "38.244.42.183",
+      "server_port": 443,
+      "uuid": "7a8792c3-d71c-4b3f-8512-0816a9ddeb63",
+      "flow": "xtls-rprx-vision",
+      "domain_strategy": "ipv4_only",
+      "tls": {
+        "enabled": true,
+        "server_name": "www.debian.org",
+        "insecure": true,
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "gluaBEUh5tHG_Ws5-gsQIUFtGTuiATQ8ARrZym0UmBY",
+          "short_id": ""
+        }
+      },
+      "tcp_fast_open": true
+    },
+    {
+      "type": "vless",
+      "tag": "🇰🇷 KR_首尔01_VMESS",
+      "server": "108.162.198.37",
+      "server_port": 443,
+      "uuid": "6ba4658d-6346-46db-887a-bca44e39abc8",
+      "domain_strategy": "ipv4_only",
+      "transport": {
+        "path": "/e34erthyhfthdrgsw",
+        "type": "ws",
+        "headers": {
+          "Host": "kr01.606404.xyz"
+        }
+      },
+      "tls": {
+        "enabled": true,
+        "server_name": "kr01.606404.xyz",
+        "insecure": true,
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        }
+      },
+      "tcp_fast_open": true
+    },
+    {
+      "type": "vless",
+      "tag": "🇰🇷 KR_首尔02_Vless",
+      "server": "64.110.65.5",
+      "server_port": 23457,
+      "uuid": "8d5db505-217b-470e-9468-cc8f13eed6ce",
+      "flow": "xtls-rprx-vision",
+      "domain_strategy": "ipv4_only",
+      "tls": {
+        "enabled": true,
+        "server_name": "signpen.net",
+        "insecure": true,
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "4comh-7Jm_wZXJQ5QiLSCbVGQIbMUzHUIBdb0aFtLzM",
+          "short_id": ""
+        }
+      },
+      "tcp_fast_open": true
+    },
+    {
+      "type": "vless",
+      "tag": "KR_Chuncheon",
+      "server": "152.69.234.35",
+      "server_port": 22540,
+      "uuid": "0f68eddb-b4cc-4770-820f-5ab720c3a030",
+      "flow": "xtls-rprx-vision",
+      "domain_strategy": "ipv4_only",
+      "tls": {
+        "enabled": true,
+        "server_name": "dash.cloudflare.com",
+        "insecure": true,
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+        "reality": {
+          "enabled": true,
+          "public_key": "M6G_nRhjw-OQ-qr_21mjNs7b-jxImEw-3QK7VRRshEg",
+          "short_id": ""
+        }
+      },
+      "tcp_fast_open": true
+    },
+    {
+      "type": "vless",
+      "tag": "CDN线路备用",
+      "server": "162.159.39.7",
+      "server_port": 443,
+      "uuid": "c840c3ac-f5d8-427e-a3dc-6bae1d2e5643",
+      "domain_strategy": "ipv4_only",
+      "transport": {
+        "path": "/345yrthfgnds",
+        "type": "ws",
+        "headers": {
+          "Host": "ww4.travelto.eu.org"
+        }
+      },
+      "tls": {
+        "enabled": true,
+        "server_name": "ww4.travelto.eu.org",
+        "insecure": true,
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        }
+      },
+      "tcp_fast_open": true
+    },
+    {
+      "type": "vless",
+      "tag": "KR_02_Vless_CDN",
+      "server": "172.64.53.197",
+      "server_port": 443,
+      "uuid": "50173062-2f0b-4947-c6d4-00d10d1cac37",
+      "domain_strategy": "ipv4_only",
+      "transport": {
+        "path": "/546ytgrscw",
+        "type": "ws",
+        "headers": {
+          "Host": "kr02.606404.xyz"
+        }
+      },
+      "tls": {
+        "enabled": true,
+        "server_name": "kr02.606404.xyz",
+        "insecure": true,
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        }
+      },
+      "tcp_fast_open": true
+    }
+  ],
+  "dns": {
+    "servers": [
+      {
+        "tag": "dns_proxy",
+        "address": "tls://8.8.8.8",
+        "detour": "🚀 节点选择"
+      },
+      {
+        "tag": "dns_direct",
+        "address": "h3://dns.alidns.com/dns-query",
+        "address_resolver": "dns_resolver",
+        "detour": "DIRECT"
+      },
+      {
+        "tag": "dns_fakeip",
+        "address": "fakeip"
+      },
+      {
+        "tag": "dns_resolver",
+        "address": "119.29.29.29",
+        "detour": "DIRECT"
+      },
+      {
+        "tag": "block",
+        "address": "rcode://success"
+      }
+    ],
+    "rules": [
+      {
+        "outbound": [
+          "any"
+        ],
+        "server": "dns_resolver"
+      },
+      {
+        "query_type": [
+          "AAAA"
+        ],
+        "server": "block",
+        "disable_cache": true
+      },
+      {
+        "rule_set": [
+          "geosite-category-ads-all"
+        ],
+        "server": "block",
+        "disable_cache": true
+      },
+      {
+        "rule_set": [
+          "geosite-cn"
+        ],
+        "server": "dns_direct"
+      },
+      {
+        "rule_set": [
+          "geosite-geolocation-!cn"
+        ],
+        "query_type": [
+          "A"
+        ],
+        "server": "dns_fakeip"
+      },
+      {
+        "rule_set": [
+          "geosite-geolocation-!cn"
+        ],
+        "server": "dns_proxy"
+      },
+      {
+        "query_type": [
+          "A"
+        ],
+        "server": "dns_fakeip"
+      }
+    ],
+    "final": "dns_proxy",
+    "independent_cache": true,
+    "fakeip": {
+      "enabled": true,
+      "inet4_range": "198.18.0.0/15"
+    },
+    "strategy": "ipv4_only"
+  },
+  "route": {
+    "rules": [
+      {
+        "port": 53,
+        "action": "hijack-dns"
+      },
+      {
+        "ip_version": 6,
+        "outbound": "BLOCK"
+      },
+      {
+        "clash_mode": "Global",
+        "outbound": "🚀 节点选择"
+      },
+      {
+        "clash_mode": "Direct",
+        "outbound": "DIRECT"
+      },
+      {
+        "rule_set": [
+          "geosite-category-ads-all"
+        ],
+        "outbound": "BLOCK"
+      },
+      {
+        "rule_set": [
+          "geosite-openai",
+          "geosite-anthropic",
+          "geosite-google"
+        ],
+        "outbound": "💬 AI"
+      },
+      {
+        "rule_set": [
+          "geosite-apple"
+        ],
+        "outbound": "🍎 苹果服务"
+      },
+      {
+        "rule_set": [
+          "geosite-paypal"
+        ],
+        "outbound": "💴 Paypal"
+      },
+      {
+        "ip_is_private": true,
+        "outbound": "DIRECT"
+      },
+      {
+        "rule_set": [
+          "geoip-cn"
+        ],
+        "outbound": "DIRECT"
+      },
+      {
+        "rule_set": [
+          "geosite-cn"
+        ],
+        "outbound": "DIRECT"
+      }
+    ],
+    "rule_set": [
+      {
+        "tag": "geosite-category-ads-all",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-category-ads-all.srs",
+        "download_detour": "DIRECT"
+      },
+      {
+        "tag": "geosite-geolocation-!cn",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-geolocation-!cn.srs",
+        "download_detour": "DIRECT"
+      },
+      {
+        "tag": "geosite-openai",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-openai.srs",
+        "download_detour": "DIRECT"
+      },
+      {
+        "tag": "geosite-anthropic",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-anthropic.srs",
+        "download_detour": "DIRECT"
+      },
+      {
+        "tag": "geosite-google",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-google.srs",
+        "download_detour": "DIRECT"
+      },
+      {
+        "tag": "geosite-apple",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-apple.srs",
+        "download_detour": "DIRECT"
+      },
+      {
+        "tag": "geosite-paypal",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-paypal.srs",
+        "download_detour": "DIRECT"
+      },
+      {
+        "tag": "geosite-cn",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-cn.srs",
+        "download_detour": "DIRECT"
+      },
+      {
+        "tag": "geoip-cn",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-cn.srs",
+        "download_detour": "DIRECT"
+      }
+    ],
+    "final": "🐟 漏网之鱼"
+  }
+}
